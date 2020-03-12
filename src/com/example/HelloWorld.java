@@ -16,13 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 public class HelloWorld extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        PrintWriter writer = response.getWriter();
-        writer.println("asdf");
-        writer.close();
-    }
-
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -33,20 +26,25 @@ public class HelloWorld extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        PrintWriter writer = response.getWriter();
+        writer.println("result of getMethod: " + request.getMethod());
+        writer.println("result of getRemoteAddr: " + request.getRemoteAddr());
+        writer.println("result of getServerName: " + request.getServerName());
+        writer.println("result of getHeader - accept" + request.getHeader("Accept"));
+        writer.println("result of getHeader - Accpet-language" + request.getHeader("Accept-Language"));
+        writer.println("result of getHeader - Accpet-Encoding" + request.getHeader("Accept-Encoding"));
+        writer.println("result of getHeader - User-agent" + request.getHeader("User-Agent"));
+        if(!(request.getParameter("imie") == null))
+            writer.println("name = " + request.getParameter("imie") + " good one!");
     }
-
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
      *      response)
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String yourName = request.getParameter("yourName");
-        PrintWriter writer = response.getWriter();
-        writer.println("<h1> Hello </h1>");
-        writer.println("<h2>" + yourName + "</h2>");
-        writer.close();
+        doGet(request, response);
+        
     }
 
 }
