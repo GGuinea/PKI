@@ -34,8 +34,11 @@ public class HelloWorld extends HttpServlet {
         writer.println("result of getHeader - Accpet-language" + request.getHeader("Accept-Language"));
         writer.println("result of getHeader - Accpet-Encoding" + request.getHeader("Accept-Encoding"));
         writer.println("result of getHeader - User-agent" + request.getHeader("User-Agent"));
-        if(!(request.getParameter("imie") == null))
-            writer.println("name = " + request.getParameter("imie") + " good one!");
+        if(!(request.getParameter("int1") == null)) {
+            int a = Integer.parseInt(request.getParameter("int2"));
+            int b = Integer.parseInt(request.getParameter("int1"));
+            writer.println(b + "+" + a + "=" + (a+b));
+        }
     }
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
