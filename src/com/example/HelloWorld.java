@@ -7,6 +7,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,6 +47,37 @@ public class HelloWorld extends HttpServlet {
         // writer.println(cfg.getInitParameter("myParam") + ctx.getInitParameter("myParam"));
         HttpSession session = request.getSession(true);
         String action = request.getParameter("akcja");
+        Cookie licznik = null;
+        Cookie[] cookies = request.getCookies();
+
+        if(cookies != null) {
+            System.out.println("not null cookies");
+            for(int i = 0; i < cookies.length; i++) {
+                System.out.println(cookies[i].getName());
+                if(cookies[i].getName().equals("licznik")) {
+                    System.out.println("There is our licnzik");
+                    licznik = cookies[i];
+                    break;
+                }
+            }
+        }
+
+        if(licznik == null) {
+            System.out.println("Null cookie");
+            licznik = new Cookie("licznik", "0");
+        } else {
+            System.out.println("not null - getting value");
+            int v = Integer.parseInt(licznik.getValue());
+            v++;
+            System.out.println("printing:" + v);
+            licznik.setValue(v+"");
+        }
+
+        licznik.setMaxAge(-1);
+        response.addCookie(licznik);
+
+        System.out.println(licznik.getValue());
+
         if (action != null) {
             if (action.equals("wyloguj")) {
                 Boolean wartosc = false;
@@ -99,6 +131,8 @@ public class HelloWorld extends HttpServlet {
                 writer.println("</html>");
             }
         }
+
+
     }
 
     /**
