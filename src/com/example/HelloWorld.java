@@ -2,6 +2,13 @@ package com.example;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Vector;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -22,6 +29,7 @@ public class HelloWorld extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private int a;
     private String msg;
+    Collection<String> tab = Collections.synchronizedCollection(new Vector<String>());
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -50,11 +58,12 @@ public class HelloWorld extends HttpServlet {
         Cookie licznik = null;
         Cookie[] cookies = request.getCookies();
 
-        if(cookies != null) {
+        if (cookies != null) {
             System.out.println("not null cookies");
-            for(int i = 0; i < cookies.length; i++) {
+            for (int i = 0; i < cookies.length; i++) {
                 System.out.println(cookies[i].getName());
-                if(cookies[i].getName().equals("licznik")) {
+                if (cookies[i].getName()
+                              .equals("licznik")) {
                     System.out.println("There is our licnzik");
                     licznik = cookies[i];
                     break;
@@ -62,7 +71,7 @@ public class HelloWorld extends HttpServlet {
             }
         }
 
-        if(licznik == null) {
+        if (licznik == null) {
             System.out.println("Null cookie");
             licznik = new Cookie("licznik", "0");
         } else {
@@ -70,7 +79,7 @@ public class HelloWorld extends HttpServlet {
             int v = Integer.parseInt(licznik.getValue());
             v++;
             System.out.println("printing:" + v);
-            licznik.setValue(v+"");
+            licznik.setValue(v + "");
         }
 
         licznik.setMaxAge(-1);
@@ -78,61 +87,50 @@ public class HelloWorld extends HttpServlet {
 
         System.out.println(licznik.getValue());
 
-        if (action != null) {
-            if (action.equals("wyloguj")) {
-                Boolean wartosc = false;
-                System.out.println("wylogujINN");
-                session.setAttribute("zalogowany", wartosc);
-            }
+        /*
+         * if (action != null) { if (action.equals("wyloguj")) { Boolean wartosc = false;
+         * System.out.println("wylogujINN"); session.setAttribute("zalogowany", wartosc); } } Boolean loggedIn =
+         * (Boolean) session.getAttribute("zalogowany"); if (loggedIn == null) { loggedIn = false;
+         * System.out.println("nulled"); } if (loggedIn == true) { writer.println("<html>");
+         * writer.println("<h1>ZALOGOWANY</h1>"); writer.println("<form method=\"get\">");
+         * writer.println("<input type=\"hidden\" name=\"akcja\" value=\"wyloguj\" \\>");
+         * writer.println("<input type=\"submit\" value=\"Wyloguj\" \\>"); writer.println("</form>");
+         * writer.println("</html>"); } else { String user; String pass; user = request.getParameter("user"); pass =
+         * request.getParameter("pass"); System.out.println("loged1"); if (user != null && pass != null) { if
+         * (user.equals("radek") && pass.equals("haslo")) { loggedIn = true; session.setAttribute("zalogowany",
+         * loggedIn); System.out.println("loged2"); response.setHeader("Refresh", "1"); } else {
+         * System.out.println("not loged"); writer.println("<html>"); writer.println("<form method=\"get\">");
+         * writer.println("<input type=\"text\" name=\"user\" \\>");
+         * writer.println("<input type=\"password\" name=\"pass\" \\>");
+         * writer.println("<input type=\"submit\" value=\"zaloguj\" \\>"); writer.println("</form>");
+         * writer.println("</html>"); } } else { System.out.println("not loged"); writer.println("<html>");
+         * writer.println("<form method=\"get\">"); writer.println("<input type=\"text\" name=\"user\" \\>");
+         * writer.println("<input type=\"password\" name=\"pass\" \\>");
+         * writer.println("<input type=\"submit\" value=\"zaloguj\" \\>"); writer.println("</form>");
+         * writer.println("</html>"); } }
+         */
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        Date date = new Date();
+        String dateLunch = dateFormat.format(date);
+        String name;
+        writer.println("<html>");
+        writer.println("<META HTTP-EQUIV=Refresh CONTENT='10'>");
+        writer.println("<body>");
+        writer.println(dateLunch);
+        writer.println("<form action='ReceiverServlet' method=\"post\">");
+        writer.println("<input type=\"text\" name=\"user\" \\>");
+        writer.println("<input type=\"submit\" value=\"zaloguj\" \\>"); 
+        writer.println("</form>");
+        name = request.getParameter("user");
+        if(name != null) {
+            tab.add(name);
         }
-        Boolean loggedIn = (Boolean) session.getAttribute("zalogowany");
-        if (loggedIn == null) {
-            loggedIn = false;
-            System.out.println("nulled");
+        Iterator<String> it = tab.iterator();
+        while(it.hasNext()) {
+            writer.println(it.next() + "<br/>");
         }
-        if (loggedIn == true) {
-            writer.println("<html>");
-            writer.println("<h1>ZALOGOWANY</h1>");
-            writer.println("<form method=\"get\">");
-            writer.println("<input type=\"hidden\" name=\"akcja\" value=\"wyloguj\" \\>");
-            writer.println("<input type=\"submit\" value=\"Wyloguj\" \\>");
-            writer.println("</form>");
-            writer.println("</html>");
-        } else {
-            String user;
-            String pass;
-            user = request.getParameter("user");
-            pass = request.getParameter("pass");
-            System.out.println("loged1");
-            if (user != null && pass != null) {
-                if (user.equals("radek") && pass.equals("haslo")) {
-                    loggedIn = true;
-                    session.setAttribute("zalogowany", loggedIn);
-                    System.out.println("loged2");
-                    response.setHeader("Refresh", "1");
-                } else {
-                    System.out.println("not loged");
-                    writer.println("<html>");
-                    writer.println("<form method=\"get\">");
-                    writer.println("<input type=\"text\" name=\"user\" \\>");
-                    writer.println("<input type=\"password\" name=\"pass\" \\>");
-                    writer.println("<input type=\"submit\" value=\"zaloguj\" \\>");
-                    writer.println("</form>");
-                    writer.println("</html>");
-                }
-            } else {
-                System.out.println("not loged");
-                writer.println("<html>");
-                writer.println("<form method=\"get\">");
-                writer.println("<input type=\"text\" name=\"user\" \\>");
-                writer.println("<input type=\"password\" name=\"pass\" \\>");
-                writer.println("<input type=\"submit\" value=\"zaloguj\" \\>");
-                writer.println("</form>");
-                writer.println("</html>");
-            }
-        }
-
-
+        writer.println("</body>");
+        writer.println("</html>");
     }
 
     /**
